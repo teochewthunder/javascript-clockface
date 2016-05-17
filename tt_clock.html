@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Clock</title>
+
+		<style>
+			#clockface
+			{
+				width:300px;
+				height:300px;
+				border-radius:50%;
+				border:5px solid #FFDD00;
+				margin-left:auto;
+				margin-right:auto;
+				margin-top:10%;
+			}
+
+			.clocksegment
+			{
+				position:absolute;
+				z-index:5;
+				width:20px;
+				height:150px;
+				margin-left:140px;
+				margin-top:0px;
+				transform-origin:50% 100%;
+				-webkit-transform-origin:50% 100%;
+				border:0px solid #FF0000;
+			}
+
+			.clocksegmentno
+			{
+				width:100%;
+				height:21px;
+				transform-origin:50% 50%;
+				-webkit-transform-origin:50% 50%;
+				color:#444444;
+				font-size:15px;
+				text-align:center;
+				border:0px solid #00FF00;
+			}
+
+			.clocksegmentno_offset
+			{
+				background-color:#444444;
+				width:1px;
+				height:5px;
+				margin-left:auto;
+				margin-right:auto;
+				margin-top:-10px;
+			}
+
+			.hand
+			{
+				position:absolute;
+				z-index:10;
+				transform-origin:50% 100%;
+				transform:rotate(0deg);
+				-webkit-transform-origin:50% 100%;
+				-webkit-transform:rotate(0deg);
+			}
+
+			#secondhand
+			{
+				margin-left:149px;
+				margin-top:50px;
+				width:3px;
+				height:100px;
+				background-color:#444444;
+			}
+
+			#minutehand
+			{
+				margin-left:148px;
+				margin-top:20px;
+				width:5px;
+				height:130px;
+				background-color:#222222;
+			}
+
+			#hourhand
+			{
+				margin-left:147px;
+				margin-top:70px;
+				width:7px;
+				height:80px;
+				background-color:#000000;
+			}			
+		</style>
+
+		<script>
+			function startclock()
+			{
+				var nowdate=new Date(); 
+				var secondpos,minutepos,hourpos;
+
+				for (i=1;i<=12;i++)
+				{
+					if (i<12)
+					{
+						document.getElementById("segment"+i).style.transform="rotate("+(i*30)+"deg)";
+						document.getElementById("segmentno"+i).style.transform="rotate(-"+(i*30)+"deg)";
+						document.getElementById("segment"+i).style.webkitTransform="rotate("+(i*30)+"deg)";
+						document.getElementById("segmentno"+i).style.webkitTransform="rotate(-"+(i*30)+"deg)";				
+					}
+
+					document.getElementById("segmentno"+i).innerHTML=i;
+				}
+
+				secondpos=nowdate.getSeconds()*6;
+				secondpos=(secondpos==360?0:secondpos);
+
+				minutepos=nowdate.getMinutes()*6;
+				minutepos=(minutepos==360?0:minutepos);
+
+				hourpos=nowdate.getHours();
+				hourpos=(hourpos>12?hourpos-12:hourpos)*30;
+				hourpos=(hourpos==360?0:hourpos);
+				hourpos=hourpos+((minutepos/360)*30);
+
+				document.getElementById("secondhand").style.transform="rotate("+secondpos+"deg)";
+				document.getElementById("minutehand").style.transform="rotate("+minutepos+"deg)";
+				document.getElementById("hourhand").style.transform="rotate("+hourpos+"deg)";
+
+				document.getElementById("secondhand").style.webkitTransform="rotate("+secondpos+"deg)";
+				document.getElementById("minutehand").style.webkitTransform="rotate("+minutepos+"deg)";
+				document.getElementById("hourhand").style.webkitTransform="rotate("+hourpos+"deg)";
+
+				setInterval(function(){move_secondhand();},1000);
+			}
+
+			function getcurrentpos(varobj)
+			{
+				var currentpos=document.getElementById(varobj).style.transform+document.getElementById(varobj).style.webkitTransform;
+				currentpos=currentpos.replace("rotate(","");
+				currentpos=currentpos.replace("deg)","");
+				currentpos=parseInt(currentpos);
+
+				return currentpos;
+			}
+
+			function move_secondhand()
+			{
+				var pos=getcurrentpos("secondhand");
+				pos+=6;
+
+				if (pos==360)
+				{
+					pos=0;
+					move_minutehand();
+				}
+
+				document.getElementById("secondhand").style.transform="rotate("+pos+"deg)";
+				document.getElementById("secondhand").style.webkitTransform="rotate("+pos+"deg)";
+			}
+
+			function move_minutehand()
+			{
+				var pos=getcurrentpos("minutehand");
+				pos+=6;
+
+				if (pos%72==0)
+				{
+					move_hourhand();
+				}
+
+				if (pos==360)
+				{
+					pos=0;
+				}
+
+				document.getElementById("minutehand").style.transform="rotate("+pos+"deg)";
+				document.getElementById("minutehand").style.webkitTransform="rotate("+pos+"deg)";	
+			}
+
+			function move_hourhand()
+			{
+				var pos=getcurrentpos("hourhand");
+				pos+=6;
+
+				if (pos==360)
+				{
+					pos=0;
+				}
+
+				document.getElementById("hourhand").style.transform="rotate("+pos+"deg)";
+				document.getElementById("hourhand").style.webkitTransform="rotate("+pos+"deg)";
+			}
+		</script>
+	</head>
+	<body onload="startclock();">
+		<div id="clockface">
+			<div id="segment1" class="clocksegment">
+				<div id="segmentno1" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment2" class="clocksegment">
+				<div id="segmentno2" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment3" class="clocksegment">
+				<div id="segmentno3" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment4" class="clocksegment">
+				<div id="segmentno4" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment5" class="clocksegment">
+				<div id="segmentno5" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment6" class="clocksegment">
+				<div id="segmentno6" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment7" class="clocksegment">
+				<div id="segmentno7" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment8" class="clocksegment">
+				<div id="segmentno8" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment9" class="clocksegment">
+				<div id="segmentno9" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment10" class="clocksegment">
+				<div id="segmentno10" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment11" class="clocksegment">
+				<div id="segmentno11" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+			<div id="segment12" class="clocksegment">
+				<div id="segmentno12" class="clocksegmentno"></div>
+				<br />
+				<div class="clocksegmentno_offset"></div>
+			</div>
+
+			<div id="secondhand" class="hand"></div>
+			<div id="minutehand" class="hand"></div>
+			<div id="hourhand" class="hand"></div>
+		</div>
+	</body>
+</html>
