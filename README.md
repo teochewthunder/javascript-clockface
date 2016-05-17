@@ -1,2 +1,2 @@
 # javascript-clockface
-Clockface in HTML/CSS/Javascript
+Javascript Clockface
